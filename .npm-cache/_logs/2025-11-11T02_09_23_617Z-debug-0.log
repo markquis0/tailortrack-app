@@ -1,0 +1,27 @@
+0 verbose cli /usr/local/bin/node /usr/local/bin/npm
+1 info using npm@10.8.2
+2 info using node@v20.18.0
+3 silly config load:file:/usr/local/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/markquissimmons/.npmrc
+5 silly config load:file:/usr/local/etc/npmrc
+6 verbose title npm init
+7 verbose argv "init" "--yes"
+8 verbose logfile logs-max:10 dir:/Users/markquissimmons/tailortrack-app/.npm-cache/_logs/2025-11-11T02_09_23_617Z-
+9 verbose logfile /Users/markquissimmons/tailortrack-app/.npm-cache/_logs/2025-11-11T02_09_23_617Z-debug-0.log
+10 silly logfile done cleaning log files
+11 silly package data {
+11 silly package data   name: 'backend',
+11 silly package data   version: '1.0.0',
+11 silly package data   main: 'index.js',
+11 silly package data   scripts: { test: 'echo "Error: no test specified" && exit 1' },
+11 silly package data   keywords: [],
+11 silly package data   author: '',
+11 silly package data   license: 'ISC',
+11 silly package data   description: ''
+11 silly package data }
+12 verbose cwd /Users/markquissimmons/tailortrack-app/backend
+13 verbose os Darwin 24.6.0
+14 verbose node v20.18.0
+15 verbose npm  v10.8.2
+16 verbose exit 0
+17 info ok

@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  tailor
+  client
+}
+
+enum AppointmentStatus {
+  scheduled
+  completed
+  canceled
+}
+
+model User {
+  id               String        @id @default(uuid())
+  name             String
+  email            String        @unique
+  passwordHash     String
+  role             Role
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  tailorClients    Client[]      @relation("TailorClients")
+  clientProfile    Client?       @relation("ClientProfile")
+  measurementEdits Measurement[] @relation("MeasurementUpdatedBy")
+  timers           Timer[]       @relation("TailorTimers")
+}
+
+model Client {
+  id            String         @id @default(uuid())
+  tailorId      String?
+  clientUserId  String?
+  storeName     String?
+  notes         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  tailor        User?          @relation("TailorClients", fields: [tailorId], references: [id])
+  clientUser    User?          @relation("ClientProfile", fields: [clientUserId], references: [id])
+  measurements  Measurement[]
+  appointments  Appointment[]
+  timers        Timer[]
+
+  @@index([tailorId])
+  @@index([clientUserId])
+  @@unique([clientUserId])
+}
+
+model Measurement {
+  id                 String    @id @default(uuid())
+  clientId           String
+  chest              Float?
+  overarm            Float?
+  waist              Float?
+  hipSeat            Float?
+  neck               Float?
+  arm                Float?
+  pantOutseam        Float?
+  pantInseam         Float?
+  coatInseam         Float?
+  height             Float?
+  weight             Float?
+  coatSize           String?
+  pantSize           String?
+  dressShirtSize     String?
+  shoeSize           String?
+  materialPreference String?
+  dateTaken          DateTime?
+  updatedById        String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  client             Client    @relation(fields: [clientId], references: [id])
+  updatedBy          User?     @relation("MeasurementUpdatedBy", fields: [updatedById], references: [id])
+
+  @@index([clientId])
+  @@index([updatedById])
+  @@unique([clientId])
+}
+
+model Appointment {
+  id         String            @id @default(uuid())
+  clientId   String
+  title      String
+  date       DateTime
+  location   String?
+  notes      String?
+  status     AppointmentStatus @default(scheduled)
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  client     Client            @relation(fields: [clientId], references: [id])
+
+  @@index([clientId])
+  @@index([status])
+}
+
+model Timer {
+  id          String   @id @default(uuid())
+  tailorId    String
+  clientId    String
+  startTime   DateTime
+  endTime     DateTime?
+  duration    Int?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  tailor      User     @relation("TailorTimers", fields: [tailorId], references: [id])
+  client      Client   @relation(fields: [clientId], references: [id])
+
+  @@index([tailorId])
+  @@index([clientId])
+}
