@@ -17,6 +17,10 @@ router.use(authenticate);
 
 router.post("/", validate(upsertMeasurementSchema), asyncHandler(upsertMeasurements));
 
+// Route for anonymous users to get their own measurements
+router.get("/me", asyncHandler(getMeasurements));
+
+// Route for authenticated users to get client measurements
 router.get(
   "/:client_id",
   validate(measurementClientParamSchema, "params"),

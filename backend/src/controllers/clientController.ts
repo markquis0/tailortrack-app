@@ -5,10 +5,10 @@ import { AppError } from "../utils/errors";
 import { hashPassword } from "../utils/password";
 import { getClientForUser } from "../services/clientAccess";
 
-const sanitizeUser = (user: { id: string; name: string; email: string }) => ({
+const sanitizeUser = (user: { id: string; name: string | null; email: string | null }) => ({
   id: user.id,
-  name: user.name,
-  email: user.email,
+  name: user.name ?? "",
+  email: user.email ?? "",
 });
 
 const formatClientResponse = (client: {
@@ -17,7 +17,7 @@ const formatClientResponse = (client: {
   notes: string | null;
   createdAt: Date;
   updatedAt: Date;
-  clientUser: { id: string; name: string; email: string } | null;
+  clientUser: { id: string; name: string | null; email: string | null } | null;
   measurements: { updatedAt: Date }[];
   appointments: { id: string; date: Date; status: string }[];
 }) => {
@@ -69,6 +69,11 @@ export const getClients = async (req: Request, res: Response) => {
     });
 
     return res.json(clients.map(formatClientResponse));
+  }
+
+  // Anonymous users don't have client profiles
+  if (req.user.isAnonymous) {
+    throw new AppError("Client profile not found", 404);
   }
 
   const client = await prisma.client.findFirst({

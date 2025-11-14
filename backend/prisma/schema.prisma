@@ -20,16 +20,20 @@ enum AppointmentStatus {
 
 model User {
   id               String        @id @default(uuid())
-  name             String
-  email            String        @unique
-  passwordHash     String
-  role             Role
+  name             String?
+  email            String?      @unique
+  passwordHash     String?
+  role             Role?
+  isAnonymous      Boolean       @default(false)
+  firstName        String?
+  lastName         String?
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
   tailorClients    Client[]      @relation("TailorClients")
   clientProfile    Client?       @relation("ClientProfile")
   measurementEdits Measurement[] @relation("MeasurementUpdatedBy")
   timers           Timer[]       @relation("TailorTimers")
+  directMeasurements Measurement[] @relation("AnonymousMeasurements")
 }
 
 model Client {
@@ -53,7 +57,8 @@ model Client {
 
 model Measurement {
   id                 String    @id @default(uuid())
-  clientId           String
+  clientId           String?
+  userId             String?
   chest              Float?
   overarm            Float?
   waist              Float?
@@ -74,12 +79,15 @@ model Measurement {
   updatedById        String?
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
-  client             Client    @relation(fields: [clientId], references: [id])
+  client             Client?   @relation(fields: [clientId], references: [id])
+  user               User?     @relation("AnonymousMeasurements", fields: [userId], references: [id])
   updatedBy          User?     @relation("MeasurementUpdatedBy", fields: [updatedById], references: [id])
 
   @@index([clientId])
+  @@index([userId])
   @@index([updatedById])
   @@unique([clientId])
+  @@unique([userId])
 }
 
 model Appointment {

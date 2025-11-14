@@ -4,13 +4,17 @@ import { AppError } from "../utils/errors";
 
 interface AuthContext {
   userId: string;
-  role: "tailor" | "client";
+  role?: "tailor" | "client";
 }
 
 export const getClientForUser = async (
   auth: AuthContext,
   clientId: string
 ) => {
+  if (!auth.role) {
+    throw new AppError("This action requires authentication", 401);
+  }
+
   const client = await prisma.client.findUnique({
     where: { id: clientId },
   });

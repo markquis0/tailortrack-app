@@ -3,7 +3,8 @@ import { z } from "zod";
 const measurementValue = z.coerce.number().positive().optional();
 
 export const upsertMeasurementSchema = z.object({
-  clientId: z.string().uuid(),
+  clientId: z.string().uuid().optional(),
+  userId: z.string().uuid().optional(),
   chest: measurementValue,
   overarm: measurementValue,
   waist: measurementValue,
