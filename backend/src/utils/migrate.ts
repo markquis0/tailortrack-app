@@ -21,15 +21,16 @@ export async function runMigrations(): Promise<void> {
     }
 
     // Run migrations
-    // Use 'migrate deploy' for production (applies pending migrations without prompts)
+    // Use 'deploy' for production (applies pending migrations without prompts)
+    // Use 'dev' for development (can create new migrations)
     // This is safe for production environments like Render
     const isProduction = process.env.NODE_ENV === 'production';
-    const migrateCommand = isProduction ? 'migrate deploy' : 'migrate dev';
+    const migrateSubcommand = isProduction ? 'deploy' : 'dev';
 
     console.log(`🚀 Running migrations (${isProduction ? 'production' : 'development'} mode)...`);
     
     try {
-      execSync(`npx prisma migrate ${migrateCommand}`, {
+      execSync(`npx prisma migrate ${migrateSubcommand}`, {
         stdio: 'inherit',
         cwd: process.cwd(),
       });
