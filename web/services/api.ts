@@ -1,5 +1,15 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
+// Log API URL in development to help debug
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  console.log('API URL:', API_URL);
+}
+
+// Warn if using default localhost in production
+if (typeof window !== 'undefined' && API_URL === 'http://localhost:5000' && window.location.hostname !== 'localhost') {
+  console.error('⚠️ NEXT_PUBLIC_API_URL is not set! API calls will fail. Please set NEXT_PUBLIC_API_URL environment variable.');
+}
+
 interface RequestOptions extends RequestInit {
   token?: string;
 }
