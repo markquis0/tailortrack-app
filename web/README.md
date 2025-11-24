@@ -21,12 +21,17 @@ A Next.js web application for tracking suit measurements and preferences. Users 
 
 ### Prerequisites
 
-- Node.js 20+
+- **Node.js 20+** (specified in `.nvmrc` and `package.json` engines)
+- **npm 10+**
 - Backend API running on `http://localhost:5000` (or update `.env.local`)
 
 ### Installation
 
 ```bash
+# If using nvm, automatically use the correct Node.js version
+nvm use
+
+# Install dependencies
 npm install
 ```
 
@@ -52,6 +57,23 @@ The app will be available at `http://localhost:3000`.
 npm run build
 npm start
 ```
+
+## Runtime Environment
+
+The app is configured to use **Node.js 20.x**:
+
+- `.nvmrc` - Specifies Node.js 20 for nvm users
+- `.node-version` - Specifies Node.js 20 for other version managers
+- `package.json` - Includes `engines` field requiring Node.js >=20.0.0
+
+### Deployment
+
+The app can be deployed to:
+- **Vercel** (recommended) - See `vercel.json` for configuration
+- **Railway, Render, or similar** - Uses Node.js 20.x runtime
+- **Docker** - Use Node.js 20 base image
+
+Make sure to set the `NEXT_PUBLIC_API_URL` environment variable in your deployment platform to point to your backend API.
 
 ## Project Structure
 
