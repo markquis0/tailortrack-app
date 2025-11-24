@@ -1,0 +1,54 @@
+import { execSync } from 'child_process';
+
+/**
+ * Runs database migrations before starting the server
+ * This ensures the database schema is up to date
+ */
+export async function runMigrations(): Promise<void> {
+  try {
+    console.log('🔄 Checking database migrations...');
+
+    // Generate Prisma Client first (in case it's not generated)
+    try {
+      console.log('📦 Ensuring Prisma Client is generated...');
+      execSync('npx prisma generate', {
+        stdio: 'pipe',
+        cwd: process.cwd(),
+      });
+    } catch (error) {
+      // If generate fails, it might already be generated, continue
+      console.log('ℹ️  Prisma Client generation skipped (may already exist)');
+    }
+
+    // Run migrations
+    // Use 'migrate deploy' for production (applies pending migrations without prompts)
+    // This is safe for production environments like Render
+    const isProduction = process.env.NODE_ENV === 'production';
+    const migrateCommand = isProduction ? 'migrate deploy' : 'migrate dev';
+
+    console.log(`🚀 Running migrations (${isProduction ? 'production' : 'development'} mode)...`);
+    
+    try {
+      execSync(`npx prisma migrate ${migrateCommand}`, {
+        stdio: 'inherit',
+        cwd: process.cwd(),
+      });
+      console.log('✅ Database migrations completed successfully');
+    } catch (migrationError) {
+      // In production, fail if migrations fail
+      if (process.env.NODE_ENV === 'production') {
+        console.error('❌ Migration failed in production - server will not start');
+        throw migrationError;
+      } else {
+        // In development, log warning but continue
+        console.warn('⚠️  Migration warning (development mode):', migrationError);
+        console.warn('⚠️  Continuing despite migration error - migrations may already be applied');
+      }
+    }
+  } catch (error) {
+    console.error('❌ Migration process failed:', error);
+    if (process.env.NODE_ENV === 'production') {
+      throw error;
+    }
+  }
+}

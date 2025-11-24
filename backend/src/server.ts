@@ -1,7 +1,11 @@
 import env from "./config/env";
 import app from "./app";
+import { runMigrations } from "./utils/migrate";
 
 const startServer = async () => {
+  // Run database migrations before starting the server
+  await runMigrations();
+
   const port = env.port;
 
   app.listen(port, () => {
