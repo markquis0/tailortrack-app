@@ -2,14 +2,17 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../hooks/useAuth';
 import api, { ClientSummary, MeasurementRecord } from '../services/api';
 import { appointmentApi } from '../services/api';
 import Card from '../components/Card';
 import SectionHeader from '../components/SectionHeader';
+import Button from '../components/Button';
 
 export default function Dashboard() {
   const { token, user } = useAuth();
+  const router = useRouter();
   const [client, setClient] = useState<ClientSummary | null>(null);
   const [measurements, setMeasurements] = useState<MeasurementRecord | null>(null);
   const [loading, setLoading] = useState(true);
@@ -172,12 +175,12 @@ export default function Dashboard() {
                 </div>
               )}
 
-              <Link
-                href="/measurements"
-                className="inline-block mt-6 text-[#1F7A8C] font-semibold hover:text-[#174E5A]"
+              <Button
+                onClick={() => router.push('/measurements')}
+                className="mt-6"
               >
-                Update measurements →
-              </Link>
+                Update measurements
+              </Button>
             </div>
           ) : (
             <p className="text-gray-600 text-center mt-4">
