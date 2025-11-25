@@ -29,10 +29,18 @@ export async function runMigrations(): Promise<void> {
 
     console.log(`🚀 Running migrations (${isProduction ? 'production' : 'development'} mode)...`);
     
+    // For production, temporarily unset SHADOW_DATABASE_URL if it exists
+    // migrate deploy doesn't need a shadow database
+    const env = { ...process.env };
+    if (isProduction && env.SHADOW_DATABASE_URL) {
+      delete env.SHADOW_DATABASE_URL;
+    }
+    
     try {
       execSync(`npx prisma migrate ${migrateSubcommand}`, {
         stdio: 'inherit',
         cwd: process.cwd(),
+        env: env,
       });
       console.log('✅ Database migrations completed successfully');
     } catch (migrationError) {
