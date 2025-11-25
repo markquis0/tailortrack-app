@@ -8,6 +8,22 @@ export async function runMigrations(): Promise<void> {
   try {
     console.log('🔄 Checking database migrations...');
 
+    // Validate DATABASE_URL before proceeding
+    const databaseUrl = process.env.DATABASE_URL;
+    if (!databaseUrl) {
+      throw new Error('DATABASE_URL environment variable is not set');
+    }
+    
+    if (!databaseUrl.startsWith('postgresql://') && !databaseUrl.startsWith('postgres://')) {
+      // Show first part of URL for debugging (without exposing password)
+      const urlPreview = databaseUrl.substring(0, 20) + '...';
+      throw new Error(
+        `DATABASE_URL must start with 'postgresql://' or 'postgres://'. ` +
+        `Current value starts with: ${urlPreview}. ` +
+        `Please check your DATABASE_URL environment variable.`
+      );
+    }
+
     // Generate Prisma Client first (in case it's not generated)
     try {
       console.log('📦 Ensuring Prisma Client is generated...');
