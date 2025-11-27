@@ -47,20 +47,50 @@ const fieldLabels: Partial<Record<keyof MeasurementRecord, string>> = {
   materialPreference: 'Material Preference',
 };
 
+const normalizeHeightDigits = (digits: string) => {
+  if (!digits) {
+    return { feet: 0, inches: 0 };
+  }
+  if (digits.length === 1) {
+    return { feet: parseInt(digits, 10) || 0, inches: 0 };
+  }
+  if (digits.length === 2) {
+    return {
+      feet: parseInt(digits.charAt(0), 10) || 0,
+      inches: parseInt(digits.charAt(1), 10) || 0,
+    };
+  }
+  const feetDigits = digits.slice(0, -2);
+  const inchDigits = digits.slice(-2);
+  const feet = parseInt(feetDigits, 10) || 0;
+  let inches = parseInt(inchDigits, 10) || 0;
+  if (inches > 11) {
+    const extraFeet = Math.floor(inches / 12);
+    inches = inches % 12;
+    return { feet: feet + extraFeet, inches };
+  }
+  return { feet, inches };
+};
+
 const formatHeightInput = (raw: string) => {
   const digits = raw.replace(/\D/g, '');
-  if (!digits) return '';
-  const totalInches = parseInt(digits, 10) || 0;
-  const feet = Math.floor(totalInches / 12);
-  const inches = totalInches % 12;
+  if (!digits) {
+    return '';
+  }
+  const { feet, inches } = normalizeHeightDigits(digits);
   return `${feet}' ${inches}''`;
 };
 
 const parseHeightToInches = (formatted: string) => {
-  if (!formatted) return undefined;
+  if (!formatted) {
+    return undefined;
+  }
   const digits = formatted.replace(/\D/g, '');
-  if (!digits) return undefined;
-  return parseInt(digits, 10);
+  if (!digits) {
+    return undefined;
+  }
+  const { feet, inches } = normalizeHeightDigits(digits);
+  return feet * 12 + inches;
 };
 
 const formatHeightFromNumber = (value: number) => {
