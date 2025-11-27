@@ -8,6 +8,7 @@ import api, { MeasurementRecord } from '../../services/api';
 import Card from '../../components/Card';
 import SectionHeader from '../../components/SectionHeader';
 import Input from '../../components/Input';
+import Select from '../../components/Select';
 import Button from '../../components/Button';
 
 const numericFields: Array<keyof MeasurementRecord> = [
@@ -27,6 +28,30 @@ const numericFields: Array<keyof MeasurementRecord> = [
 const sizeFields: Array<keyof MeasurementRecord> = ['coatSize', 'dressShirtSize', 'shoeSize'];
 
 const preferenceFields: Array<keyof MeasurementRecord> = ['materialPreference'];
+
+// Popular men's professional suitwear materials
+const materialOptions = [
+  { value: 'Wool', label: 'Wool' },
+  { value: 'Wool Blend', label: 'Wool Blend' },
+  { value: 'Super 100s Wool', label: 'Super 100s Wool' },
+  { value: 'Super 120s Wool', label: 'Super 120s Wool' },
+  { value: 'Super 150s Wool', label: 'Super 150s Wool' },
+  { value: 'Cashmere', label: 'Cashmere' },
+  { value: 'Cashmere Blend', label: 'Cashmere Blend' },
+  { value: 'Linen', label: 'Linen' },
+  { value: 'Linen Blend', label: 'Linen Blend' },
+  { value: 'Cotton', label: 'Cotton' },
+  { value: 'Cotton Blend', label: 'Cotton Blend' },
+  { value: 'Silk', label: 'Silk' },
+  { value: 'Silk Blend', label: 'Silk Blend' },
+  { value: 'Mohair', label: 'Mohair' },
+  { value: 'Tweed', label: 'Tweed' },
+  { value: 'Flannel', label: 'Flannel' },
+  { value: 'Gabardine', label: 'Gabardine' },
+  { value: 'Seersucker', label: 'Seersucker' },
+  { value: 'Tropical Wool', label: 'Tropical Wool' },
+  { value: 'Synthetic Blend', label: 'Synthetic Blend' },
+];
 
 const fieldLabels: Partial<Record<keyof MeasurementRecord, string>> = {
   chest: 'Chest',
@@ -339,31 +364,38 @@ export default function MeasurementsPage() {
             onChange={(e) => setPantLength(e.target.value)}
             placeholder="34"
           />
-          {sizeFields.map((field) => (
-            <Input
-              key={field}
-              label={fieldLabels[field]}
-              type="text"
-              value={values[field] ?? ''}
-              onChange={(e) => updateValue(field, e.target.value)}
-              placeholder="42R / 10.5 US"
-            />
-          ))}
+          {sizeFields.map((field) => {
+            const placeholder =
+              field === 'dressShirtSize'
+                ? '15/35'
+                : field === 'shoeSize'
+                  ? "12 Men's"
+                  : '42R / 10.5 US';
+            return (
+              <Input
+                key={field}
+                label={fieldLabels[field]}
+                type="text"
+                value={values[field] ?? ''}
+                onChange={(e) => updateValue(field, e.target.value)}
+                placeholder={placeholder}
+              />
+            );
+          })}
         </Card>
 
         <Card>
           <SectionHeader
             title="Material Preferences"
-            subtitle="Share your favorite fabrics and materials."
+            subtitle="Select your preferred fabric for professional suitwear."
           />
           {preferenceFields.map((field) => (
-            <Input
+            <Select
               key={field}
               label={fieldLabels[field]}
-              type="text"
               value={values[field] ?? ''}
               onChange={(e) => updateValue(field, e.target.value)}
-              placeholder="Linen, cotton..."
+              options={materialOptions}
             />
           ))}
         </Card>
